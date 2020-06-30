@@ -3,3 +3,12 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+/.idea/.idea.Mammoth/.idea/contentModel.xml
+/.idea/.idea.Mammoth/.idea/encodings.xml
+/.idea/.idea.Mammoth/.idea/indexLayout.xml
+/Mammoth.Api/Properties/launchSettings.json
+/Mammoth.Worker/Properties/launchSettings.json
+/.idea/.idea.Mammoth/.idea/modules.xml
+/.idea/.idea.Mammoth/.idea/projectSettingsUpdater.xml
+/.idea/.idea.Mammoth/.idea/vcs.xml
+/.idea/.idea.Mammoth/.idea/workspace.xml
