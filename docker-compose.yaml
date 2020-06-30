@@ -1,0 +1,14 @@
+version: "3"
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: ./Mammoth.Api/Dockerfile
+    ports: 
+    - 5010:5010
+  worker:
+    build: 
+      context: .
+      dockerfile: ./Mammoth.Worker/Dockerfile
+    depends_on: 
+    - api
