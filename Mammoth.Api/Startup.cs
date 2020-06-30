@@ -1,4 +1,5 @@
-﻿using Mammoth.Api.Services;
+﻿using Mammoth.Api.Hubs;
+using Mammoth.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,7 @@ namespace Mammoth.Api
                 options.Configuration = "redis";
                 options.InstanceName = "Mammoth";
             });
+            services.AddSignalR();
             services.AddGrpc();
             services.AddControllers();
         }
@@ -36,6 +38,7 @@ namespace Mammoth.Api
             {
                 endpoints.MapGrpcService<GreeterService>();
                 endpoints.MapControllers();
+                endpoints.MapHub<MammothHub>("/mammoth-ws");
                 // endpoints.MapGet("/",
                 //     async context =>
                 //     {
