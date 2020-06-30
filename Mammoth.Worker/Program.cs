@@ -16,6 +16,26 @@ namespace Mammoth.Worker
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureServices((hostContext, services) => { services.AddHostedService<Worker>(); });
+                .ConfigureServices((hostContext, services) =>
+                {
+                    if (hostContext.HostingEnvironment.IsProduction())
+                    {
+                        services.AddStackExchangeRedisCache(options =>
+                        {
+                            options.Configuration = "redis";
+                            options.InstanceName = "Mammoth";
+                        });    
+                    }
+                    else
+                    {
+                        services.AddStackExchangeRedisCache(options =>
+                        {
+                            options.Configuration = "localhost";
+                            options.InstanceName = "Mammoth";
+                        });
+                    }
+                    
+                    services.AddHostedService<Worker>();
+                });
     }
 }

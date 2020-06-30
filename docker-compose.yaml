@@ -12,3 +12,5 @@ services:
       dockerfile: ./Mammoth.Worker/Dockerfile
     depends_on: 
     - api
+  sredis:
+    image: "redis:5"
