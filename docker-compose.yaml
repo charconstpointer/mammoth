@@ -5,12 +5,12 @@ services:
       context: .
       dockerfile: ./Mammoth.Api/Dockerfile
     ports: 
-    - 5010:5010
+    - 5011:5011
   worker:
     build: 
       context: .
       dockerfile: ./Mammoth.Worker/Dockerfile
     depends_on: 
     - api
-  sredis:
+  redis:
     image: "redis:5"

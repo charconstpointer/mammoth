@@ -1,7 +1,8 @@
 ﻿FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-focal AS base
 WORKDIR /app
-ENV ASPNETCORE_URLS=http://+:5010
+ENV ASPNETCORE_URLS=http://+:5010;http://+:5011
 EXPOSE 5010
+EXPOSE 5011
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-focal AS build
 WORKDIR /src

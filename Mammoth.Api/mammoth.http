@@ -1,0 +1,4 @@
+﻿GET http://localhost:5010/schedules
+Accept: application/json
+
+###

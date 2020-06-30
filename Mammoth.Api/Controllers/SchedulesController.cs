@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Mammoth.Api
+namespace Mammoth.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -15,6 +15,10 @@ namespace Mammoth.Api
         {
             _cache = cache;
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Get() => Ok("schedules");
+
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetSchedule(int id, DateTime date)
