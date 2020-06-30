@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Mammoth.Api
 {
-    public class Program
+    public class App
     {
         public static void Main(string[] args)
         {

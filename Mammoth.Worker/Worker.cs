@@ -21,7 +21,6 @@ namespace Mammoth.Worker
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-            // var channel = GrpcChannel.ForAddress("http://localhost:5010");
             var channel = GrpcChannel.ForAddress("http://api:5010");
             var client = new Greeter.GreeterClient(channel);
             
@@ -37,7 +36,7 @@ namespace Mammoth.Worker
                     Console.WriteLine(e);
                 }
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(5000, stoppingToken);
             }
         }
     }
