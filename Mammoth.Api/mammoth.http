@@ -1,4 +1,8 @@
-﻿GET http://localhost:5010/schedules
+﻿GET https://polskie.azurewebsites.net/mobile/api/schedules/?Program=1
+Accept: application/json
+
+###
+GET http://localhost:5010/schedules
 Accept: application/json
 
 ###

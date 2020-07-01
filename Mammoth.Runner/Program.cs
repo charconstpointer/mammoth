@@ -10,12 +10,12 @@ namespace Mammoth.Runner
         static async Task Main(string[] args)
         {
             var playlist = new Playlist();
-            playlist.AddChannel(1, new List<Track>
-            {
-                new Track("first", DateTime.Now, DateTime.Now.AddSeconds(10) ),
-                new Track("second", DateTime.Now.AddSeconds(10), DateTime.Now.AddSeconds(20)),
-                new Track("third", DateTime.Now.AddSeconds(20), DateTime.Now.AddSeconds(30)),
-            });
+            // playlist.AddChannel(1, new List<Track>
+            // {
+            //     new Track("first", DateTime.Now, DateTime.Now.AddSeconds(10) ),
+            //     new Track("second", DateTime.Now.AddSeconds(10), DateTime.Now.AddSeconds(20)),
+            //     new Track("third", DateTime.Now.AddSeconds(20), DateTime.Now.AddSeconds(30)),
+            // });
             playlist.TrackChanged += OnPlaylistOnTrackChanged;
             // while (playlist.GetCurrentlyPlayed(1).Title != null)
             // {

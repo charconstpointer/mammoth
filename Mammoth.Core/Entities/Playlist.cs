@@ -20,7 +20,7 @@ namespace Mammoth.Core.Entities
             foreach (var (key, value) in _channels)
             {
                 if (!value.TryPeek(out var current)) continue;
-                if (current.End > DateTime.Now) continue;
+                if (current.StopHour > DateTime.Now) continue;
                 value.TryPop(out _);
                 OnTrackChanged(key, value.Peek());
                 Console.WriteLine("Track has expired, popping");
@@ -41,7 +41,9 @@ namespace Mammoth.Core.Entities
 
             _channels.Add(channelId, new Stack<Track>());
             var channel = _channels[channelId];
-            foreach (var track in tracks.Reverse())
+            var channelSchedule = tracks.ToList();
+            var tracksToAdd = channelSchedule.Where(t => t.StopHour >= DateTime.Now);
+            foreach (var track in tracksToAdd.Reverse())
             {
                 channel.Push(track);
             }

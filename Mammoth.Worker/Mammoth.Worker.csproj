@@ -22,4 +22,8 @@
             <Generator>MSBuild:Compile</Generator>
         </Protobuf>
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Mammoth.Core\Mammoth.Core.csproj" />
+    </ItemGroup>
 </Project>

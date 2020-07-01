@@ -1,4 +1,4 @@
-﻿namespace Mammoth.Worker.DTO
+﻿namespace Mammoth.Core.Entities
 {
     public class Sound
     {

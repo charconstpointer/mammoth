@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Mammoth.Worker.DTO;
 
 namespace Mammoth.Api.DTO
 {

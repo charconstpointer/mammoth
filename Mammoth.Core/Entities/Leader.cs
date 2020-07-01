@@ -1,4 +1,4 @@
-﻿namespace Mammoth.Api.DTO
+﻿namespace Mammoth.Core.Entities
 {
     public class Leader
     {

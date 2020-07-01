@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Mammoth.Core.Entities;
 
 namespace Mammoth.Worker.DTO
 {
