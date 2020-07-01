@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Mammoth.Api.DTO;
 using Mammoth.Api.Hubs;
-using Mammoth.Worker;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;

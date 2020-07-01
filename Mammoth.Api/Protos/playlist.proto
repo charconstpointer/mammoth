@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option csharp_namespace = "Mammoth.Api.Grpc";
+
+package playlist;
+
+// The greeting service definition.
+service Playlist {
+  // Sends a greeting
+  rpc Notify (CurrentTrackRequest) returns (CurrentTrackResponse);
+}
+
+// The request message containing the user's name.
+message CurrentTrackRequest {
+  int32 channelId = 1;
+}
+
+// The response message containing the greetings.
+message CurrentTrackResponse {
+}

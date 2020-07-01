@@ -34,6 +34,7 @@ namespace Mammoth.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<GreeterService>();
+                endpoints.MapGrpcService<PlaylistService>();
                 endpoints.MapControllers();
                 endpoints.MapHub<MammothHub>("/mammoth-ws");
                 // endpoints.MapGet("/",

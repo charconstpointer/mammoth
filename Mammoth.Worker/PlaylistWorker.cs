@@ -5,24 +5,29 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Net.Client;
-using Mammoth.Core.Entities;
 using Mammoth.Worker.DTO;
 using Mammoth.Worker.Extensions;
+using Mammoth.Worker.Grpc;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using JsonConverter = System.Text.Json.Serialization.JsonConverter;
+using Playlist = Mammoth.Core.Entities.Playlist;
 
 namespace Mammoth.Worker
 {
     public class PlaylistWorker : BackgroundService
     {
         private readonly HttpClient _httpClient;
+        private readonly IDistributedCache _cache;
         private readonly ILogger<PlaylistWorker> _logger;
 
-        public PlaylistWorker(ILogger<PlaylistWorker> logger)
+        public PlaylistWorker(ILogger<PlaylistWorker> logger, IDistributedCache cache)
         {
             _httpClient = new HttpClient();
             _logger = logger;
+            _cache = cache;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -31,8 +36,8 @@ namespace Mammoth.Worker
             {
                 AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
                 var channel = GrpcChannel.ForAddress("http://api:5010");
-                var client =   new ScheduleService.ScheduleServiceClient(channel);
-                await client.NotifyAsync(new CurrentTrackRequest {ChannelId = 1, Description = "f"});
+                var client = new Grpc.Playlist.PlaylistClient(channel);
+                await client.NotifyAsync(new CurrentTrackRequest());
                 var playlist = new Playlist();
                 await SetupPlaylist(playlist, client);
                 while (!stoppingToken.IsCancellationRequested)
@@ -47,7 +52,7 @@ namespace Mammoth.Worker
             }
         }
 
-        private async Task SetupPlaylist(Playlist playlist, ScheduleService.ScheduleServiceClient client)
+        private async Task SetupPlaylist(Playlist playlist, Grpc.Playlist.PlaylistClient client)
         {
             var ids = new List<int> {1, 2, 3, 4, 5, 6, 7, 8, 9};
             foreach (var id in ids)
@@ -58,7 +63,11 @@ namespace Mammoth.Worker
 
             playlist.TrackChanged += async (sender, change) =>
             {
-                _logger.LogInformation($"{change.ChannelId} started playing #{change.Track.Id} => {change.Track.Title}");
+                var key = $"CurrentTrack-{change.ChannelId}";
+                _logger.LogInformation(
+                    $"{change.ChannelId} started playing #{change.Track.Id} => {change.Track.Title}");
+                await _cache.SetStringAsync(key, JsonConvert.SerializeObject(change.Track));
+                _logger.LogInformation($"Settings cache entry {key}");
                 await client.NotifyAsync(new CurrentTrackRequest
                 {
                     ChannelId = change.ChannelId
