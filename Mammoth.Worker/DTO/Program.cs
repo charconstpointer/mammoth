@@ -18,5 +18,6 @@ namespace Mammoth.Worker.DTO
         public DateTime StartHour { get; set; }
         public DateTime StopHour { get; set; }
         public IEnumerable<SubProgram> Subprograms { get; set; }
+
     }
 }
