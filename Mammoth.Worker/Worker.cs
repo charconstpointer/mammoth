@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
@@ -18,6 +19,8 @@ namespace Mammoth.Worker
     {
         private readonly ILogger<Worker> _logger;
         private readonly IDistributedCache _cache;
+        private readonly ICollection<string> _words = new List<string> {"foo", "bar", "baz", "clazz"};
+        private readonly Random _random = new Random();
 
         public Worker(ILogger<Worker> logger, IDistributedCache cache)
         {
@@ -38,7 +41,8 @@ namespace Mammoth.Worker
             }
         }
 
-        private async Task ProcessSchedules(CancellationToken stoppingToken, Greeter.GreeterClient client, HttpClient httpClient)
+        private async Task ProcessSchedules(CancellationToken stoppingToken, Greeter.GreeterClient client,
+            HttpClient httpClient)
         {
             try
             {
@@ -69,7 +73,8 @@ namespace Mammoth.Worker
         private async Task SetCacheEntry(ScheduleResponse schedule, CancellationToken stoppingToken, int id)
         {
             var programs = schedule.Schedule.AsDto();
-            programs.FirstOrDefault().Description = $"{DateTime.UtcNow.ToLongTimeString()}";
+            programs.FirstOrDefault().Description =
+                $"{DateTime.UtcNow.ToLongTimeString()} - {_words.ElementAt(_random.Next(_words.Count))}";
             var key = $"{DateTime.Now.Date}-{id}";
             var programsSerialized = JsonConvert.SerializeObject(programs);
             await _cache.SetStringAsync(key, programsSerialized, token: stoppingToken);
