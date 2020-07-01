@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option csharp_namespace = "Mammoth.Schedule.Server";
+
+package schedule;
+
+service Schedule {
+  rpc Notify (CurrentTrackRequest) returns (CurrentTrackResponse);
+}
+
+message CurrentTrackRequest {
+  int32 channelId = 1;
+  string description = 2;
+}
+
+message CurrentTrackResponse {
+
+}

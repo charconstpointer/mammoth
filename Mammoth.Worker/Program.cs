@@ -27,9 +27,6 @@ namespace Mammoth.Worker
                             options.Configuration = "localhost";
                             options.InstanceName = "Mammoth";
                         });
-
-                    // services.AddHostedService<Worker>();
-                    // services.AddHostedService<ScheduleWatcher>();
                     services.AddHostedService<PlaylistWorker>();
                 });
         }
