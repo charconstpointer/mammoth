@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,6 +69,7 @@ namespace Mammoth.Worker
         private async Task SetCacheEntry(ScheduleResponse schedule, CancellationToken stoppingToken, int id)
         {
             var programs = schedule.Schedule.AsDto();
+            programs.FirstOrDefault().Description = $"{DateTime.UtcNow.ToLongTimeString()}";
             var key = $"{DateTime.Now.Date}-{id}";
             var programsSerialized = JsonConvert.SerializeObject(programs);
             await _cache.SetStringAsync(key, programsSerialized, token: stoppingToken);
