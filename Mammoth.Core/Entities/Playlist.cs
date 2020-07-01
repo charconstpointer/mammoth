@@ -19,6 +19,7 @@ namespace Mammoth.Core.Entities
             {
                 throw new ApplicationException("Channel already exists");
             }
+
             _channels.Add(channelId, new Stack<Track>());
             var channel = _channels[channelId];
             foreach (var track in tracks.Reverse())
@@ -29,8 +30,17 @@ namespace Mammoth.Core.Entities
 
         public Track GetCurrentlyPlayed(int channelId)
         {
-            var asked = _channels[channelId].Pop();
-            return asked;
+            if (!_channels.ContainsKey(channelId))
+            {
+                throw new ApplicationException("No such channel");
+            }
+
+            var hasTrack = _channels[channelId].TryPop(out var track);
+            if (hasTrack)
+            {
+                return track;
+            }
+            throw new ApplicationException("Channel is empty");
         }
     }
 }

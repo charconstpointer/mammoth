@@ -18,6 +18,7 @@ namespace Mammoth.Runner
             Console.WriteLine(playlist.GetCurrentlyPlayed(1).Title);
             Console.WriteLine(playlist.GetCurrentlyPlayed(1).Title);
             Console.WriteLine(playlist.GetCurrentlyPlayed(1).Title);
+            Console.WriteLine(playlist.GetCurrentlyPlayed(1).Title);
         }
     }
 }
