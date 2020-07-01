@@ -7,7 +7,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Mammoth.Worker
 {
-    public class Program
+    public class App
     {
         public static void Main(string[] args)
         {

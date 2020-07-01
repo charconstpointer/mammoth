@@ -23,7 +23,8 @@ namespace Mammoth.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetSchedule(int id, DateTime date)
         {
-            var schedule = await _cache.GetStringAsync("Mammoth.Test");
+            var key = $"{DateTime.Now.Date}-{id}";
+            var schedule = await _cache.GetStringAsync(key);
             return Ok(schedule);
         }
     }
