@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Net.Client;
 using Mammoth.Core.Entities;
-using Mammoth.Schedule.Client;
 using Mammoth.Worker.DTO;
 using Mammoth.Worker.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -32,7 +31,8 @@ namespace Mammoth.Worker
             {
                 AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
                 var channel = GrpcChannel.ForAddress("http://api:5010");
-                var client = new Schedule.Client.Schedule.ScheduleClient(channel);
+                var client =   new ScheduleService.ScheduleServiceClient(channel);
+                await client.NotifyAsync(new CurrentTrackRequest {ChannelId = 1, Description = "f"});
                 var playlist = new Playlist();
                 await SetupPlaylist(playlist, client);
                 while (!stoppingToken.IsCancellationRequested)
@@ -47,7 +47,7 @@ namespace Mammoth.Worker
             }
         }
 
-        private async Task SetupPlaylist(Playlist playlist, Schedule.Client.Schedule.ScheduleClient client)
+        private async Task SetupPlaylist(Playlist playlist, ScheduleService.ScheduleServiceClient client)
         {
             var ids = new List<int> {1, 2, 3, 4, 5, 6, 7, 8, 9};
             foreach (var id in ids)

@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-option csharp_namespace = "Mammoth.Schedule.Server";
+option csharp_namespace = "Mammoth.Api";
 
 package schedule;
 
-service Schedule {
+service ScheduleService {
   rpc Notify (CurrentTrackRequest) returns (CurrentTrackResponse);
 }
 

@@ -2,14 +2,13 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Mammoth.Api.DTO;
 using Mammoth.Api.Hubs;
-using Mammoth.Schedule.Server;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 
 namespace Mammoth.Api.Services
 {
-    public class ScheduleService : Schedule.Server.Schedule.ScheduleBase
+    public class ScheduleService : Mammoth.Api.ScheduleService.ScheduleServiceBase
     {
         private readonly IHubContext<MammothHub> _hubContext;
         private readonly IDistributedCache _cache;
@@ -23,7 +22,9 @@ namespace Mammoth.Api.Services
             _logger = logger;
         }
 
-        public override async Task<CurrentTrackResponse> Notify(CurrentTrackRequest request, ServerCallContext context)
+
+        public override async Task<CurrentTrackResponse> Notify(CurrentTrackRequest request,
+            ServerCallContext context)
         {
             var channelId = request.ChannelId;
             var key = $"CurrentTrack-{channelId}";
