@@ -35,7 +35,8 @@ namespace Mammoth.Worker
                         });
                     }
                     
-                    services.AddHostedService<Worker>();
+                    // services.AddHostedService<Worker>();
+                    services.AddHostedService<ScheduleWatcher>();
                 });
     }
 }

@@ -17,5 +17,23 @@ namespace Mammoth.Api.DTO
         public DateTime StartHour { get; set; }
         public DateTime StopHour { get; set; }
         public IEnumerable<SubProgram> Subprograms { get; set; }
+
+        protected bool Equals(Program other)
+        {
+            return Id == other.Id;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Program) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id;
+        }
     }
 }

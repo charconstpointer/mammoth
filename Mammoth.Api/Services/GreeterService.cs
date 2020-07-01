@@ -19,7 +19,8 @@ namespace Mammoth.Api.Services
         private readonly Random _random = new Random();
         private readonly ICollection<string> _emojis = new List<string> {"k", "u", "r", "w", "a"};
 
-        public GreeterService(ILogger<GreeterService> logger, IHubContext<MammothHub> hubContext, IDistributedCache cache)
+        public GreeterService(ILogger<GreeterService> logger, IHubContext<MammothHub> hubContext,
+            IDistributedCache cache)
         {
             _logger = logger;
             _hubContext = hubContext;
@@ -28,16 +29,20 @@ namespace Mammoth.Api.Services
 
         public override async Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
         {
-            _logger.LogInformation($"Tick, {DateTime.UtcNow}");
-            await SendMessage();
-            await SendScheduleChanged(_random.Next(10));
-            _logger.LogInformation($"Invoked onTick, {DateTime.UtcNow}");
+            var id = 1;
+            var currentlyPlayed = await _cache.GetStringAsync($"Currently-Played-{id}");
+            await _hubContext.Clients.All.SendAsync("currentlyPlayedChanged",
+                new PlayedTrackMessage {ScheduleId = 1, Payload = currentlyPlayed});
+            _logger.LogInformation($"currentlyPlayedChanged, {id}");
+            // await SendMessage();
+            // await SendScheduleChanged(_random.Next(10));
+            // _logger.LogInformation($"Invoked onTick, {DateTime.UtcNow}");
             return new HelloReply {Message = request.Name};
         }
 
         private async Task SendMessage()
         {
-            var emoji = _emojis.ElementAt(_random.Next(_emojis.Count ));
+            var emoji = _emojis.ElementAt(_random.Next(_emojis.Count));
             await _hubContext.Clients.All.SendAsync("onTick", new {Message = emoji});
         }
 
