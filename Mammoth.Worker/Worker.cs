@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,10 +15,10 @@ namespace Mammoth.Worker
 {
     public class Worker : BackgroundService
     {
-        private readonly ILogger<Worker> _logger;
         private readonly IDistributedCache _cache;
-        private readonly ICollection<string> _words = new List<string> {"foo", "bar", "baz", "clazz"};
+        private readonly ILogger<Worker> _logger;
         private readonly Random _random = new Random();
+        private readonly ICollection<string> _words = new List<string> {"foo", "bar", "baz", "clazz"};
 
         public Worker(ILogger<Worker> logger, IDistributedCache cache)
         {
@@ -75,7 +73,7 @@ namespace Mammoth.Worker
             var programs = schedule.Schedule.AsDto();
             var key = $"{DateTime.Now.Date}-{id}";
             var programsSerialized = JsonConvert.SerializeObject(programs);
-            await _cache.SetStringAsync(key, programsSerialized, token: stoppingToken);
+            await _cache.SetStringAsync(key, programsSerialized, stoppingToken);
             _logger.LogInformation($"Schedule cache {key}");
         }
     }

@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -35,7 +34,7 @@ namespace Mammoth.Worker
                     $"https://polskie.azurewebsites.net/mobile/api/schedules/?Program={id}&SelectedDate={day}");
                 _logger.LogInformation("Fetched schedule");
                 var schedule = JsonConvert.DeserializeObject<ScheduleResponse>(response)
-                    .Schedule.OrderBy(s=>s.StopHour)
+                    .Schedule.OrderBy(s => s.StopHour)
                     .AsDto();
                 playlist.AddChannel(id, schedule.AsEntity());
                 playlist.TrackChanged += (sender, change) =>

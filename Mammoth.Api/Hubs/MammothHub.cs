@@ -4,6 +4,5 @@ namespace Mammoth.Api.Hubs
 {
     public class MammothHub : Hub
     {
-        
     }
 }

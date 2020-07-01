@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Mammoth.Api.DTO;
 using Mammoth.Worker.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -17,14 +16,18 @@ namespace Mammoth.Api.Controllers
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<SchedulesController> _logger;
-        public SchedulesController( ILogger<SchedulesController> logger)
+
+        public SchedulesController(ILogger<SchedulesController> logger)
         {
             _httpClient = new HttpClient();
             _logger = logger;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get() => Ok("schedules");
+        public async Task<IActionResult> Get()
+        {
+            return Ok("schedules");
+        }
 
 
         [HttpGet("{id:int}")]
@@ -35,7 +38,7 @@ namespace Mammoth.Api.Controllers
                 $"https://polskie.azurewebsites.net/mobile/api/schedules/?Program={id}&SelectedDate={day}");
             _logger.LogInformation("Fetched schedule");
             var schedule = JsonConvert.DeserializeObject<ScheduleResponse>(response)
-                .Schedule.OrderBy(s=>s.StopHour)
+                .Schedule.OrderBy(s => s.StopHour)
                 .AsDto();
             return Ok(schedule);
         }

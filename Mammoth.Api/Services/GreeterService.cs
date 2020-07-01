@@ -13,11 +13,11 @@ namespace Mammoth.Api.Services
 {
     public class GreeterService : Greeter.GreeterBase
     {
-        private readonly ILogger<GreeterService> _logger;
-        private readonly IHubContext<MammothHub> _hubContext;
         private readonly IDistributedCache _cache;
-        private readonly Random _random = new Random();
         private readonly ICollection<string> _emojis = new List<string> {"k", "u", "r", "w", "a"};
+        private readonly IHubContext<MammothHub> _hubContext;
+        private readonly ILogger<GreeterService> _logger;
+        private readonly Random _random = new Random();
 
         public GreeterService(ILogger<GreeterService> logger, IHubContext<MammothHub> hubContext,
             IDistributedCache cache)

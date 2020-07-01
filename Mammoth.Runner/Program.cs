@@ -4,10 +4,9 @@ using Mammoth.Core.Entities;
 
 namespace Mammoth.Runner
 {
-
-    class App
+    internal class App
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             var playlist = new Playlist();
             playlist.TrackChanged += OnPlaylistOnTrackChanged;

@@ -14,9 +14,9 @@ namespace Mammoth.Worker
 {
     public class ScheduleWatcher : BackgroundService
     {
+        private readonly IDistributedCache _cache;
         private readonly HttpClient _httpClient;
         private readonly ILogger<ScheduleWatcher> _logger;
-        private readonly IDistributedCache _cache;
         private Program _currentlyPlayed;
 
         public ScheduleWatcher(ILogger<ScheduleWatcher> logger, IDistributedCache cache)
@@ -42,6 +42,7 @@ namespace Mammoth.Worker
                 {
                     _logger.LogInformation(e.StackTrace);
                 }
+
                 await Task.Delay(5000, stoppingToken);
             }
         }

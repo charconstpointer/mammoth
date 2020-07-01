@@ -7,6 +7,9 @@ namespace Mammoth.Core.Entities
 {
     public class Playlist
     {
+        private readonly IDictionary<int, Stack<Track>> _channels;
+        private readonly Timer _timer;
+
         public Playlist()
         {
             _timer = new Timer {Interval = 100};
@@ -27,40 +30,26 @@ namespace Mammoth.Core.Entities
             }
         }
 
-        private readonly IDictionary<int, Stack<Track>> _channels;
-        private readonly Timer _timer;
         public event EventHandler<TrackChange> TrackChanged;
 
 
         public void AddChannel(int channelId, IEnumerable<Track> tracks)
         {
-            if (_channels.ContainsKey(channelId))
-            {
-                throw new ApplicationException("Channel already exists");
-            }
+            if (_channels.ContainsKey(channelId)) throw new ApplicationException("Channel already exists");
 
             _channels.Add(channelId, new Stack<Track>());
             var channel = _channels[channelId];
             var channelSchedule = tracks.ToList();
             var tracksToAdd = channelSchedule.Where(t => t.StopHour >= DateTime.Now);
-            foreach (var track in tracksToAdd.Reverse())
-            {
-                channel.Push(track);
-            }
+            foreach (var track in tracksToAdd.Reverse()) channel.Push(track);
         }
 
         public Track GetCurrentlyPlayed(int channelId)
         {
-            if (!_channels.ContainsKey(channelId))
-            {
-                throw new ApplicationException("No such channel");
-            }
+            if (!_channels.ContainsKey(channelId)) throw new ApplicationException("No such channel");
 
             var hasTrack = _channels[channelId].TryPeek(out var track);
-            if (hasTrack)
-            {
-                return track;
-            }
+            if (hasTrack) return track;
 
             throw new ApplicationException("Channel is empty");
         }

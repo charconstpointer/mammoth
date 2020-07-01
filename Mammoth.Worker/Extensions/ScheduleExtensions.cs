@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mammoth.Core.Entities;
@@ -74,6 +73,7 @@ namespace Mammoth.Worker.Extensions
                     Title = program.Description
                 });
             }
+
             return programs;
         }
 
@@ -95,20 +95,27 @@ namespace Mammoth.Worker.Extensions
                 Title = subProgram.Description
             };
         }
+
         public static IEnumerable<ProgramDto> AsDto(this IEnumerable<Program> programs)
         {
             return programs.Select(AsDto).SelectMany(p => p);
         }
+
         public static IEnumerable<ProgramDto> AsDto(this IEnumerable<SubProgram> subPrograms, Program program)
         {
             return subPrograms.Select(x => x.AsDto(program));
         }
+
         public static IEnumerable<Track> AsEntity(this IEnumerable<ProgramDto> programs)
-            => programs.Select(x => x.AsEntity());
+        {
+            return programs.Select(x => x.AsEntity());
+        }
 
         public static Track AsEntity(this ProgramDto program)
-            => new Track(program.AntenaId, program.ArticleLink, program.Category, program.Description, program.Id,
+        {
+            return new Track(program.AntenaId, program.ArticleLink, program.Category, program.Description, program.Id,
                 program.Title, program.IsActive, program.Leaders, program.Photo, program.Sounds, program.StartHour,
                 program.StopHour);
+        }
     }
 }
