@@ -1,16 +1,16 @@
 version: "3"
 services:
   api:
-    build: 
+    build:
       context: .
       dockerfile: ./Mammoth.Api/Dockerfile
-    ports: 
-    - 5011:5011
+    ports:
+      - 80:5011
   worker:
-    build: 
+    build:
       context: .
       dockerfile: ./Mammoth.Worker/Dockerfile
-    depends_on: 
-    - api
+    depends_on:
+      - api
   redis:
     image: "redis:5"
