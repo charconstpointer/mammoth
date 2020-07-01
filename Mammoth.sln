@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mammoth.Worker", "Mammoth.W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mammoth.Api", "Mammoth.Api\Mammoth.Api.csproj", "{17CE69C0-AB13-4F7C-8467-51232D09C8AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mammoth.Core", "Mammoth.Core\Mammoth.Core.csproj", "{22C18F40-D216-4920-BF79-727D82550659}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mammoth.Runner", "Mammoth.Runner\Mammoth.Runner.csproj", "{4B52248D-0807-4AE8-BD63-6E8F6AB08DB9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{17CE69C0-AB13-4F7C-8467-51232D09C8AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17CE69C0-AB13-4F7C-8467-51232D09C8AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17CE69C0-AB13-4F7C-8467-51232D09C8AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22C18F40-D216-4920-BF79-727D82550659}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22C18F40-D216-4920-BF79-727D82550659}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22C18F40-D216-4920-BF79-727D82550659}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22C18F40-D216-4920-BF79-727D82550659}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B52248D-0807-4AE8-BD63-6E8F6AB08DB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B52248D-0807-4AE8-BD63-6E8F6AB08DB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B52248D-0807-4AE8-BD63-6E8F6AB08DB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B52248D-0807-4AE8-BD63-6E8F6AB08DB9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
