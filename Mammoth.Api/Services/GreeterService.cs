@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
+using Mammoth.Api.DTO;
 using Mammoth.Api.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 
 namespace Mammoth.Api.Services
@@ -13,19 +15,22 @@ namespace Mammoth.Api.Services
     {
         private readonly ILogger<GreeterService> _logger;
         private readonly IHubContext<MammothHub> _hubContext;
+        private readonly IDistributedCache _cache;
         private readonly Random _random = new Random();
         private readonly ICollection<string> _emojis = new List<string> {"k", "u", "r", "w", "a"};
 
-        public GreeterService(ILogger<GreeterService> logger, IHubContext<MammothHub> hubContext)
+        public GreeterService(ILogger<GreeterService> logger, IHubContext<MammothHub> hubContext, IDistributedCache cache)
         {
             _logger = logger;
             _hubContext = hubContext;
+            _cache = cache;
         }
 
         public override async Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
         {
             _logger.LogInformation($"Tick, {DateTime.UtcNow}");
             await SendMessage();
+            await SendScheduleChanged(1);
             _logger.LogInformation($"Invoked onTick, {DateTime.UtcNow}");
             return new HelloReply {Message = request.Name};
         }
@@ -34,6 +39,15 @@ namespace Mammoth.Api.Services
         {
             var emoji = _emojis.ElementAt(_random.Next(_emojis.Count ));
             await _hubContext.Clients.All.SendAsync("onTick", new {Message = emoji});
+        }
+
+        private async Task SendScheduleChanged(int id)
+        {
+            _logger.LogInformation($"Sending schedule #{id}");
+            var schedule = await _cache.GetStringAsync($"{DateTime.Now.Date}-{id}");
+            await _hubContext.Clients.All.SendAsync("scheduleChanged",
+                new ScheduleMessage {ScheduleId = id, Payload = schedule});
+            _logger.LogInformation($"Sent schedule #{id} successfully");
         }
     }
 }
