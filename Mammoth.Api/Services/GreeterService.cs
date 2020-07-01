@@ -30,7 +30,7 @@ namespace Mammoth.Api.Services
         {
             _logger.LogInformation($"Tick, {DateTime.UtcNow}");
             await SendMessage();
-            await SendScheduleChanged(1);
+            await SendScheduleChanged(_random.Next(10));
             _logger.LogInformation($"Invoked onTick, {DateTime.UtcNow}");
             return new HelloReply {Message = request.Name};
         }

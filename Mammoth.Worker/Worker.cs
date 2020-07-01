@@ -73,13 +73,6 @@ namespace Mammoth.Worker
         private async Task SetCacheEntry(ScheduleResponse schedule, CancellationToken stoppingToken, int id)
         {
             var programs = schedule.Schedule.AsDto();
-            var program = programs.FirstOrDefault();
-            if (program != null)
-            {
-                program.Description =
-                    $"{DateTime.UtcNow.ToLongTimeString()} - {_words.ElementAt(_random.Next(_words.Count))}";
-            }
-
             var key = $"{DateTime.Now.Date}-{id}";
             var programsSerialized = JsonConvert.SerializeObject(programs);
             await _cache.SetStringAsync(key, programsSerialized, token: stoppingToken);
