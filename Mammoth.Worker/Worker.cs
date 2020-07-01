@@ -32,30 +32,40 @@ namespace Mammoth.Worker
             var httpClient = new HttpClient();
             while (!stoppingToken.IsCancellationRequested)
             {
-                try
-                {
-                    await client.SayHelloAsync(new HelloRequest {Name = "foobar"});
-                    _logger.LogInformation("sent!");
-                    var id = 1;
-                    var day = DateTime.Now;
-                    var response = await httpClient.GetStringAsync(
-                        $"https://polskie.azurewebsites.net/mobile/api/schedules/?Program={id}&SelectedDate={day}");
-                    _logger.LogInformation("Fetched schedule");
-                    var schedule = JsonConvert.DeserializeObject<ScheduleResponse>(response);
-                    await SetCacheEntry(stoppingToken, schedule, id);
-                    
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                await Task.Delay(5000, stoppingToken);
+                await ProcessSchedules(stoppingToken, client, httpClient);
+                await Task.Delay(10000, stoppingToken);
             }
         }
 
-        private async Task SetCacheEntry(CancellationToken stoppingToken, ScheduleResponse schedule, int id)
+        private async Task ProcessSchedules(CancellationToken stoppingToken, Greeter.GreeterClient client, HttpClient httpClient)
+        {
+            try
+            {
+                await client.SayHelloAsync(new HelloRequest {Name = "foobar"});
+                for (var i = 0; i < 10; i++)
+                {
+                    _logger.LogInformation($"Fetching schedule #id = {i}");
+                    await FetchSchedule(i, httpClient, stoppingToken);
+                    _logger.LogInformation($"Schedule #id = {i} fetched successfully");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        private async Task FetchSchedule(int id, HttpClient httpClient, CancellationToken stoppingToken)
+        {
+            var day = DateTime.Now;
+            var response = await httpClient.GetStringAsync(
+                $"https://polskie.azurewebsites.net/mobile/api/schedules/?Program={id}&SelectedDate={day}");
+            _logger.LogInformation("Fetched schedule");
+            var schedule = JsonConvert.DeserializeObject<ScheduleResponse>(response);
+            await SetCacheEntry(schedule, stoppingToken, id);
+        }
+
+        private async Task SetCacheEntry(ScheduleResponse schedule, CancellationToken stoppingToken, int id)
         {
             var programs = schedule.Schedule.AsDto();
             var key = $"{DateTime.Now.Date}-{id}";
