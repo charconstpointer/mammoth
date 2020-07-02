@@ -12,7 +12,6 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using JsonConverter = System.Text.Json.Serialization.JsonConverter;
 using Playlist = Mammoth.Core.Entities.Playlist;
 
 namespace Mammoth.Worker
@@ -37,7 +36,6 @@ namespace Mammoth.Worker
                 AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
                 var channel = GrpcChannel.ForAddress("http://api:5010");
                 var client = new Grpc.Playlist.PlaylistClient(channel);
-                await client.NotifyAsync(new CurrentTrackRequest());
                 var playlist = new Playlist();
                 await SetupPlaylist(playlist, client);
                 while (!stoppingToken.IsCancellationRequested)
