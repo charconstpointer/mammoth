@@ -16,7 +16,7 @@ namespace Mammoth.Worker.Extensions
             if (subprogramsDto.Any())
             {
                 var first = subprogramsDto.First();
-                if (first.StartHour < program.StartHour)
+                if (first.StartHour < program.StopHour)
                 {
                     var opening = new ProgramDto
                     {

@@ -63,7 +63,7 @@ namespace Mammoth.Worker
             {
                 var key = $"CurrentTrack-{change.ChannelId}";
                 _logger.LogInformation(
-                    $"{change.ChannelId} started playing #{change.Track.Id} => {change.Track.Title}");
+                    $"{change.ChannelId} started playing #{change.Track.Id} => {change.Track.Title} / {change.Track.Description}");
                 await _cache.SetStringAsync(key, JsonConvert.SerializeObject(change.Track));
                 _logger.LogInformation($"Settings cache entry {key}");
                 await client.NotifyAsync(new CurrentTrackRequest

@@ -38,9 +38,13 @@ namespace Mammoth.Api.Controllers
             var response = await _httpClient.GetStringAsync(
                 $"https://polskie.azurewebsites.net/mobile/api/schedules/?Program={id}&SelectedDate={day}");
             _logger.LogInformation("Fetched schedule");
+
             var schedule = JsonConvert.DeserializeObject<ScheduleResponse>(response)
-                .Schedule.OrderBy(s => s.StopHour)
-                .AsDto();
+                .Schedule.Where(s => s.StartHour >= DateTime.Now)
+                .Select(p => p.AsDto())
+                .SelectMany(p => p);
+            // .OrderBy(s => s.StopHour)
+            // .AsDto();
             return Ok(schedule);
         }
     }
