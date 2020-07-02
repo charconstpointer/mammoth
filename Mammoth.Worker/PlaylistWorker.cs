@@ -72,7 +72,7 @@ namespace Mammoth.Worker
 
         private async Task<IEnumerable<ProgramDto>> FetchSchedule(int id)
         {
-            var day = DateTime.Now;
+            var day = DateTime.UtcNow.AddHours(2);
             var response = await _httpClient.GetStringAsync(
                 $"https://polskie.azurewebsites.net/mobile/api/schedules/?Program={id}&SelectedDate={day}");
             _logger.LogInformation("Fetched schedule");
