@@ -11,9 +11,9 @@ namespace Mammoth.Api.Services
 {
     public class PlaylistService : Playlist.PlaylistBase
     {
-        private readonly ILogger<PlaylistService> _logger;
         private readonly IDistributedCache _cache;
         private readonly IHubContext<MammothHub> _hubContext;
+        private readonly ILogger<PlaylistService> _logger;
 
         public PlaylistService(ILogger<PlaylistService> logger, IDistributedCache cache,
             IHubContext<MammothHub> hubContext)
@@ -31,7 +31,7 @@ namespace Mammoth.Api.Services
             var track = await _cache.GetStringAsync(key);
             if (!string.IsNullOrEmpty(track))
             {
-                _logger.LogInformation($"Propagating track change to all clients");
+                _logger.LogInformation("Propagating track change to all clients");
                 await _hubContext.Clients.All.SendAsync("currentlyPlayedChanged", new PlayedTrackMessage
                 {
                     ScheduleId = channelId,

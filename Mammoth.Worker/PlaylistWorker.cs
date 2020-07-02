@@ -18,8 +18,8 @@ namespace Mammoth.Worker
 {
     public class PlaylistWorker : BackgroundService
     {
-        private readonly HttpClient _httpClient;
         private readonly IDistributedCache _cache;
+        private readonly HttpClient _httpClient;
         private readonly ILogger<PlaylistWorker> _logger;
 
         public PlaylistWorker(ILogger<PlaylistWorker> logger, IDistributedCache cache)
@@ -38,10 +38,7 @@ namespace Mammoth.Worker
                 var client = new Grpc.Playlist.PlaylistClient(channel);
                 var playlist = new Playlist();
                 await SetupPlaylist(playlist, client);
-                while (!stoppingToken.IsCancellationRequested)
-                {
-                    await Task.Delay(999999999, stoppingToken);
-                }
+                while (!stoppingToken.IsCancellationRequested) await Task.Delay(999999999, stoppingToken);
             }
             catch (Exception e)
             {

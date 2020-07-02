@@ -1,6 +1,7 @@
 using System;
+using Mammoth.Core.Entities;
 
-namespace Mammoth.Core.Entities
+namespace Mammoth.Core.Events
 {
     public class TrackChange : EventArgs
     {

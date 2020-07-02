@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mammoth.Core.Entities;
@@ -76,32 +75,6 @@ namespace Mammoth.Worker.Extensions
                 });
             }
 
-            // for (int i = 0; i < programs.Count - 1; i++)
-            // {
-            //     var ending = programs[i].StopHour;
-            //     var beginning = programs[i + 1].StartHour;
-            //     Console.WriteLine($"{ending} < {beginning}");
-            //     if (ending < beginning)
-            //     {
-            //         programs.Add(new ProgramDto
-            //         {
-            //             Category = program.Category,
-            //             Description = program.Description,
-            //             Id = program.Id,
-            //             Leaders = program.Leaders,
-            //             Photo = program.Photo,
-            //             Sounds = program.Sounds,
-            //             AntenaId = program.AntenaId,
-            //             ArticleLink = program.ArticleLink,
-            //             IsActive = program.IsActive,
-            //             StartHour = ending,
-            //             StopHour = beginning,
-            //             Title = program.Description
-            //         });
-            //     }
-            // }
-
-            // return programs.OrderBy(p => p.StopHour);
             return programs;
         }
 
