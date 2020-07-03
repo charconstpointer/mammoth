@@ -9,6 +9,7 @@ using Mammoth.Worker.DTO;
 using Mammoth.Worker.Extensions;
 using Mammoth.Worker.Grpc;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -21,12 +22,13 @@ namespace Mammoth.Worker
         private readonly IDistributedCache _cache;
         private readonly HttpClient _httpClient;
         private readonly ILogger<PlaylistWorker> _logger;
-
-        public PlaylistWorker(ILogger<PlaylistWorker> logger, IDistributedCache cache)
+        private readonly string _connectionString;
+        public PlaylistWorker(ILogger<PlaylistWorker> logger, IDistributedCache cache, IConfiguration configuration)
         {
             _httpClient = new HttpClient();
             _logger = logger;
             _cache = cache;
+            _connectionString = configuration.GetConnectionString("Api");
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -34,8 +36,9 @@ namespace Mammoth.Worker
             try
             {
                 AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-                var channel = GrpcChannel.ForAddress("http://api:5010");
+                var channel = GrpcChannel.ForAddress(_connectionString);
                 var client = new Grpc.Playlist.PlaylistClient(channel);
+                client.NotifyAsync(new CurrentTrackRequest());
                 var playlist = new Playlist();
                 await SetupPlaylist(playlist, client);
                 while (!stoppingToken.IsCancellationRequested) await Task.Delay(999999999, stoppingToken);

@@ -93,7 +93,7 @@ namespace Mammoth.Worker.Extensions
                 IsActive = subProgram.IsActive,
                 StartHour = subProgram.StartHour,
                 StopHour = subProgram.StopHour,
-                Title = subProgram.Description
+                Title = subProgram.Title
             };
         }
 
