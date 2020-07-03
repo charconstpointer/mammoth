@@ -23,6 +23,7 @@ namespace Mammoth.Worker
         private readonly HttpClient _httpClient;
         private readonly ILogger<PlaylistWorker> _logger;
         private readonly string _connectionString;
+
         public PlaylistWorker(ILogger<PlaylistWorker> logger, IDistributedCache cache, IConfiguration configuration)
         {
             _httpClient = new HttpClient();
@@ -38,7 +39,6 @@ namespace Mammoth.Worker
                 AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
                 var channel = GrpcChannel.ForAddress(_connectionString);
                 var client = new Grpc.Playlist.PlaylistClient(channel);
-                client.NotifyAsync(new CurrentTrackRequest());
                 var playlist = new Playlist();
                 await SetupPlaylist(playlist, client);
                 while (!stoppingToken.IsCancellationRequested) await Task.Delay(999999999, stoppingToken);
@@ -53,11 +53,17 @@ namespace Mammoth.Worker
         private async Task SetupPlaylist(Playlist playlist, Grpc.Playlist.PlaylistClient client)
         {
             var ids = new List<int> {1, 2, 3, 4, 5, 6, 7, 8, 9};
-            foreach (var id in ids)
+            Parallel.ForEach(ids, async id =>
             {
                 var schedule = await FetchSchedule(id);
+                _logger.LogInformation($"Fetching schedule#{id}");
                 playlist.AddChannel(id, schedule.AsEntity());
-            }
+            });
+            // foreach (var id in ids)
+            // {
+            //     var schedule = await FetchSchedule(id);
+            //     playlist.AddChannel(id, schedule.AsEntity());
+            // }
 
             playlist.TrackChanged += async (sender, change) =>
             {

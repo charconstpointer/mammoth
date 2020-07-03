@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using Mammoth.Core.Events;
 
@@ -9,25 +12,30 @@ namespace Mammoth.Core.Entities
     public class Playlist
     {
         private readonly IDictionary<int, Stack<Track>> _channels;
-        private readonly Timer _timer;
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+        private readonly Thread _ticker;
 
         public Playlist()
         {
-            _timer = new Timer {Interval = 100};
-            _timer.Elapsed += OnTimerOnElapsed;
-            _timer.Start();
-            _channels = new Dictionary<int, Stack<Track>>();
+            _channels = new ConcurrentDictionary<int, Stack<Track>>();
+            _ticker = new Thread(async () => await OnTick()) {IsBackground = true};
+            _ticker.Start();
         }
 
-        private void OnTimerOnElapsed(object sender, ElapsedEventArgs args)
+        private async Task OnTick()
         {
-            foreach (var (key, value) in _channels)
+            while (true)
             {
-                if (!value.TryPeek(out var current)) continue;
-                if (current.StopHour > DateTime.UtcNow.AddHours(2)) continue;
-                value.TryPop(out _);
-                OnTrackChanged(key, value.Peek());
-                Console.WriteLine("Track has expired, popping");
+                foreach (var (key, value) in _channels)
+                {
+                    if (!value.TryPeek(out var current)) continue;
+                    if (current.StopHour > DateTime.UtcNow.AddHours(2)) continue;
+                    value.TryPop(out _);
+                    OnTrackChanged(key, value.Peek());
+                    Console.WriteLine("Track has expired, popping");
+                }
+
+                await Task.Delay(1000);
             }
         }
 
