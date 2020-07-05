@@ -12,17 +12,18 @@ namespace Mammoth.Core.Entities
     public class Playlist
     {
         private readonly IDictionary<int, Stack<Track>> _channels;
+
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly Thread _ticker;
 
         public Playlist()
         {
             _channels = new ConcurrentDictionary<int, Stack<Track>>();
-            _ticker = new Thread(async () => await OnTick()) {IsBackground = true};
+            _ticker = new Thread(OnTick) {IsBackground = true};
             _ticker.Start();
         }
 
-        private async Task OnTick()
+        private void OnTick()
         {
             while (true)
             {
@@ -35,8 +36,9 @@ namespace Mammoth.Core.Entities
                     Console.WriteLine("Track has expired, popping");
                 }
 
-                await Task.Delay(1000);
+                Thread.Sleep(1000);
             }
+            // ReSharper disable once FunctionNeverReturns
         }
 
         public event EventHandler<TrackChange> TrackChanged;
