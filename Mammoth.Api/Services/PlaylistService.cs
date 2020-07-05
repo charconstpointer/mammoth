@@ -29,15 +29,13 @@ namespace Mammoth.Api.Services
             _logger.LogInformation($"Received request for track change on channel {channelId}");
             var key = $"CurrentTrack-{channelId}";
             var track = await _cache.GetStringAsync(key);
-            if (!string.IsNullOrEmpty(track))
+            if (string.IsNullOrEmpty(track)) return new CurrentTrackResponse();
+            _logger.LogInformation("Propagating track change to all clients");
+            await _hubContext.Clients.All.SendAsync("currentlyPlayedChanged", new PlayedTrackMessage
             {
-                _logger.LogInformation("Propagating track change to all clients");
-                await _hubContext.Clients.All.SendAsync("currentlyPlayedChanged", new PlayedTrackMessage
-                {
-                    ScheduleId = channelId,
-                    Payload = track
-                });
-            }
+                ScheduleId = channelId,
+                Payload = track
+            });
 
             return new CurrentTrackResponse();
         }

@@ -7,14 +7,14 @@ namespace Mammoth.Runner
 {
     internal class App
     {
-        private static async Task Main(string[] args)
+        private static void Main()
         {
             var playlist = new Playlist();
             playlist.TrackChanged += OnPlaylistOnTrackChanged;
             Console.ReadKey();
         }
 
-        private static void OnPlaylistOnTrackChanged(object? sender, TrackChange eventArgs)
+        private static void OnPlaylistOnTrackChanged(object sender, TrackChange eventArgs)
         {
             Console.WriteLine($"Track {eventArgs.Track.Title} is playing on {eventArgs.ChannelId}");
         }

@@ -34,49 +34,54 @@ namespace Mammoth.Worker
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            try
+            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+            var channel = GrpcChannel.ForAddress(_connectionString);
+            var client = new Grpc.Playlist.PlaylistClient(channel);
+            var playlist = new Playlist();
+            var fetchDate = DateTime.UtcNow.AddHours(2); //init date
+            SetupPlaylist(playlist, client);
+            while (!stoppingToken.IsCancellationRequested)
             {
-                AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-                var channel = GrpcChannel.ForAddress(_connectionString);
-                var client = new Grpc.Playlist.PlaylistClient(channel);
-                var playlist = new Playlist();
-                await SetupPlaylist(playlist, client);
-                while (!stoppingToken.IsCancellationRequested) await Task.Delay(999999999, stoppingToken);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
+                var currentTime = DateTime.UtcNow.AddHours(2); //time in pl
+                if (currentTime != fetchDate)
+                {
+                    //Day has changed, fetch new schedule etc.
+                    SetupPlaylist(playlist, client);
+                }
+
+                //tracks are changed not more often than every minute
+                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
             }
         }
 
-        private async Task SetupPlaylist(Playlist playlist, Grpc.Playlist.PlaylistClient client)
+        private void SetupPlaylist(Playlist playlist, Grpc.Playlist.PlaylistClient client)
         {
-            var ids = new List<int> {1, 2, 3, 4, 5, 6, 7, 8, 9};
-            Parallel.ForEach(ids, async id =>
+            try
             {
-                var schedule = await FetchSchedule(id);
-                _logger.LogInformation($"Fetching schedule#{id}");
-                playlist.AddChannel(id, schedule.AsEntity());
-            });
-            // foreach (var id in ids)
-            // {
-            //     var schedule = await FetchSchedule(id);
-            //     playlist.AddChannel(id, schedule.AsEntity());
-            // }
-
-            playlist.TrackChanged += async (sender, change) =>
-            {
-                var key = $"CurrentTrack-{change.ChannelId}";
-                _logger.LogInformation(
-                    $"{change.ChannelId} started playing #{change.Track.Id} => {change.Track.StartHour} - {change.Track.StopHour} {change.Track.Title} / {change.Track.Description}");
-                await _cache.SetStringAsync(key, JsonConvert.SerializeObject(change.Track));
-                _logger.LogInformation($"Settings cache entry {key}");
-                await client.NotifyAsync(new CurrentTrackRequest
+                var ids = new List<int> {1, 2, 3, 4, 5, 6, 7, 8, 9};
+                Parallel.ForEach(ids, async id =>
                 {
-                    ChannelId = change.ChannelId
+                    var schedule = await FetchSchedule(id);
+                    _logger.LogInformation($"Fetching schedule#{id}");
+                    playlist.AddChannel(id, schedule.AsEntity());
                 });
-            };
+                playlist.TrackChanged += async (sender, change) =>
+                {
+                    var key = $"CurrentTrack-{change.ChannelId}";
+                    _logger.LogInformation(
+                        $"{change.ChannelId} started playing #{change.Track.Id} => {change.Track.StartHour} - {change.Track.StopHour} {change.Track.Title} / {change.Track.Description}");
+                    await _cache.SetStringAsync(key, JsonConvert.SerializeObject(change.Track));
+                    _logger.LogInformation($"Settings cache entry {key}");
+                    await client.NotifyAsync(new CurrentTrackRequest
+                    {
+                        ChannelId = change.ChannelId
+                    });
+                };
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"{e.StackTrace}");
+            }
         }
 
         private async Task<IEnumerable<ProgramDto>> FetchSchedule(int id)
