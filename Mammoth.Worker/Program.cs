@@ -18,7 +18,7 @@ namespace Mammoth.Worker
                     if (hostContext.HostingEnvironment.IsProduction())
                         services.AddStackExchangeRedisCache(options =>
                         {
-                            options.Configuration = "redis";
+                            options.Configuration = "localhost";
                             options.InstanceName = "Mammoth";
                         });
                     else

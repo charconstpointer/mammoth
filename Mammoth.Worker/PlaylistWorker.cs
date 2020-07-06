@@ -39,18 +39,21 @@ namespace Mammoth.Worker
             var client = new Grpc.Playlist.PlaylistClient(channel);
             var playlist = new Playlist();
             var fetchDate = DateTime.UtcNow.AddHours(2); //init date
-            SetupPlaylist(playlist, client);
+            // SetupPlaylist(playlist, client);
             while (!stoppingToken.IsCancellationRequested)
             {
                 var currentTime = DateTime.UtcNow.AddHours(2); //time in pl
-                if (currentTime != fetchDate)
+                if (currentTime.Date != fetchDate.Date)
                 {
+                    _logger.LogInformation($"Day has changed, reloading schedule");
                     //Day has changed, fetch new schedule etc.
                     SetupPlaylist(playlist, client);
                 }
-
+                
+                _logger.LogInformation("Waiting...");
                 //tracks are changed not more often than every minute
-                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                await Task.Delay(1000, stoppingToken);
+                // await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
             }
         }
 
@@ -58,13 +61,14 @@ namespace Mammoth.Worker
         {
             try
             {
-                var ids = new List<int> {1, 2, 3, 4, 5, 6, 7, 8, 9};
+                var ids = new List<int> {1, 2, 3};
                 Parallel.ForEach(ids, async id =>
                 {
-                    var schedule = await FetchSchedule(id);
                     _logger.LogInformation($"Fetching schedule#{id}");
+                    var schedule = await FetchSchedule(id);
                     playlist.AddChannel(id, schedule.AsEntity());
                 });
+                _logger.LogInformation("Fetched all schedules");
                 playlist.TrackChanged += async (sender, change) =>
                 {
                     var key = $"CurrentTrack-{change.ChannelId}";
@@ -72,10 +76,10 @@ namespace Mammoth.Worker
                         $"{change.ChannelId} started playing #{change.Track.Id} => {change.Track.StartHour} - {change.Track.StopHour} {change.Track.Title} / {change.Track.Description}");
                     await _cache.SetStringAsync(key, JsonConvert.SerializeObject(change.Track));
                     _logger.LogInformation($"Settings cache entry {key}");
-                    await client.NotifyAsync(new CurrentTrackRequest
-                    {
-                        ChannelId = change.ChannelId
-                    });
+                    // await client.NotifyAsync(new CurrentTrackRequest
+                    // {
+                    //     ChannelId = change.ChannelId
+                    // });
                 };
             }
             catch (Exception e)
@@ -89,7 +93,7 @@ namespace Mammoth.Worker
             var day = DateTime.UtcNow.AddHours(2);
             var response = await _httpClient.GetStringAsync(
                 $"https://polskie.azurewebsites.net/mobile/api/schedules/?Program={id}&SelectedDate={day}");
-            _logger.LogInformation("Fetched schedule");
+            _logger.LogInformation($"Fetched schedule {id}");
             var schedule = JsonConvert.DeserializeObject<ScheduleResponse>(response)
                 .Schedule.OrderBy(s => s.StopHour)
                 .AsDto();
